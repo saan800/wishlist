@@ -1,0 +1,22 @@
+{
+  "name": "wishlist",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "dev": "lerna run dev --parallel",
+    "build": "lerna run build",
+    "test": "lerna run test --parallel",
+    "package": "lerna run package"
+  },
+  "keywords": [],
+  "author": "saan800",
+  "license": "MIT",
+  "devDependencies": {
+    "lerna": "^6.5.1"
+  },
+  "workspaces": [
+    "api/**",
+    "frontend/**"
+  ]
+}

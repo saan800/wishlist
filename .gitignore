@@ -71,6 +71,9 @@ publish/
 *.nuget.props
 *.nuget.targets
 
+# User files
+*.user
+
 # Logs
 logs
 *.log
