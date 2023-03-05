@@ -1,6 +1,5 @@
 ﻿using Amazon.Lambda.APIGatewayEvents;
 using System.Text.Json;
-using Xunit;
 
 namespace WishListApi.Tests.TestHelpers;
 

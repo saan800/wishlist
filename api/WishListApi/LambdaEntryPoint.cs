@@ -33,7 +33,7 @@ public class LambdaEntryPoint :
     /// needs to be configured in this method using the UseStartup<>() method.
     /// </summary>
     /// <param name="builder"></param>
-    protected override void Init(IWebHostBuilder builder) 
+    protected override void Init(IWebHostBuilder builder)
         => builder.UseStartup<Startup>();
 
     /// <summary>

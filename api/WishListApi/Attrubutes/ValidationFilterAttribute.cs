@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace WishListApi.Attrubutes;
 
@@ -13,7 +13,8 @@ public class ValidationFilterAttribute : IActionFilter
         }
     }
 
-    public void OnActionExecuted(ActionExecutedContext context) {
+    public void OnActionExecuted(ActionExecutedContext context)
+    {
         // Nothing to do once function is executed
     }
 }
