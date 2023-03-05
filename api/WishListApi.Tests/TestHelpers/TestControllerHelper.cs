@@ -6,9 +6,9 @@ namespace WishListApi.Tests.TestHelpers;
 
 public static class TestControllerHelper
 {
-	private const string GetRequestFileName = "./SampleRequests/Controller-Get.json";
+    private const string GetRequestFileName = "./SampleRequests/Controller-Get.json";
 
-	public static APIGatewayProxyRequest BuildGetRequest(string path)
+    public static APIGatewayProxyRequest BuildGetRequest(string path)
      => BuildGetRequest(path, null);
 
     public static APIGatewayProxyRequest BuildGetRequest(string path, string? queryString)
@@ -17,7 +17,7 @@ public static class TestControllerHelper
     public static APIGatewayProxyRequest BuildGetRequest(string path, string? queryString, IDictionary<string, string>? headers)
      => BuildRequest(
             requestFileName: GetRequestFileName,
-			httpMethod: "GET",
+            httpMethod: "GET",
             path: path,
             queryString: queryString,
             headers: headers,
@@ -31,24 +31,20 @@ public static class TestControllerHelper
         {
             PropertyNameCaseInsensitive = true
         });
+
         if (request == null)
         {
             throw new ArgumentException($"Could not create {nameof(APIGatewayProxyRequest)} from {requestFileName}");
         }
 
-		request.Path = !path.StartsWith("/") ? $"/{path}" : path;
+        request.Path = !path.StartsWith("/") ? $"/{path}" : path;
 
-        if (request.PathParameters == null)
-        {
-            request.PathParameters = new Dictionary<string, string> { };
-        }
-        request.PathParameters.Add("proxy", request.Path.Substring(1));
+        request.PathParameters ??= new Dictionary<string, string> { };
+        request.PathParameters.Add("proxy", request.Path[1..]); // remove initial "/" from path
 
         request.HttpMethod = httpMethod.ToUpper();
-        if (request.RequestContext == null)
-        {
-            request.RequestContext = new APIGatewayProxyRequest.ProxyRequestContext();
-        }
+
+        request.RequestContext ??= new APIGatewayProxyRequest.ProxyRequestContext();
         request.RequestContext.HttpMethod = request.HttpMethod;
 
         if (headers != null)
