@@ -9,10 +9,7 @@ public class FakeLoginRequest
     public string? Email { get; set; }
 
     [Required]
-    public string? FirstName { get; set; }
-
-    [Required]
     [MinLength(2)]
-    public string? LastName { get; set; }
+    public string? Name { get; set; }
 }
 

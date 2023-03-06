@@ -1,7 +1,8 @@
+using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using WishListApi.Attrubutes;
 using WishListApi.Config;
 
@@ -88,11 +89,21 @@ public class Startup
             endpoints.MapControllers();
             endpoints.MapGet("/", async context =>
             {
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsync("Unknown url path");
+                var statusCode = HttpStatusCode.NoContent;
+                context.Response.StatusCode = (int)statusCode;
+                await context.Response.WriteAsync(statusCode.ToString());
             });
         });
 
-        app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        if (env.IsDevelopment())
+        {
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        }
+        else
+        {
+#pragma warning disable S1135 // Track uses of "TODO" tags
+            // TODO: limit CORS to website url only
+#pragma warning restore S1135 // Track uses of "TODO" tags
+        }
     }
 }
