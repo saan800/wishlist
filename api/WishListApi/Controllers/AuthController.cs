@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using WishListApi.Attrubutes;
-using WishListApi.Models;
+using WishListApi.Models.Auth;
 using WishListApi.Services;
 
 namespace WishListApi.Controllers;

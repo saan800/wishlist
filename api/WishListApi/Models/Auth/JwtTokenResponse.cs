@@ -1,4 +1,4 @@
-﻿namespace WishListApi.Models;
+﻿namespace WishListApi.Models.Auth;
 
 public class JwtTokenResponse
 {

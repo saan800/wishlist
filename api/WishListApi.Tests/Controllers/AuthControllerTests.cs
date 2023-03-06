@@ -3,7 +3,7 @@ using System.Text.Json;
 using Amazon.Lambda.TestUtilities;
 using AutoFixture.Xunit2;
 using Shouldly;
-using WishListApi.Models;
+using WishListApi.Models.Auth;
 using WishListApi.Tests.TestHelpers;
 using Xunit;
 
