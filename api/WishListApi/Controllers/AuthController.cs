@@ -28,14 +28,12 @@ public class AuthController : ControllerBase
     public IActionResult FakeLogin([FromBody] FakeLoginRequest login)
     {
         // Email and Name will always have values as the ModelState is already checked in ValidationFilterAttribute
+        // TODO: get user 
         return Ok(BuildJwtTokenResponse(login.Email ?? "", login.Name ?? ""));
     }
 
-#pragma warning disable S1135 // Track uses of "TODO" tags
     // TODO: SSO login for Google, Facebook etc - return same JWT token format
     //       Check if email is known in DB, create new user record if needed
-#pragma warning restore S1135 // Track uses of "TODO" tags
-
     private JwtTokenResponse BuildJwtTokenResponse(string email, string name)
     {
         email = email.ToLower().Trim();

@@ -19,6 +19,8 @@ namespace WishListApi.Services
         {
             email = email.ToLower().Trim();
             name = name.Trim();
+            // TODO: something unique here that's not a GUID hopefully - use for SeoUrlKeys of wish lists
+            var userId = name.Replace(" ", "").Replace("-", "").ToLower();
 
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -29,7 +31,8 @@ namespace WishListApi.Services
                     // standard JWT claims: https://www.iana.org/assignments/jwt/jwt.xhtml
                     claims: new List<Claim>
                     {
-                        new Claim("sub", email),
+                        new Claim("sub", userId),
+                        new Claim("email", email),
                         new Claim("name", name)
                     },
                     expires: DateTime.UtcNow.AddMinutes(60),

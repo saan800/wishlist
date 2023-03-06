@@ -19,18 +19,14 @@ public class LambdaEntryPoint :
     // Note: When using the AWS::Serverless::Function resource with an event type of "HttpApi" then payload version 2.0
     // will be the default and you must make Amazon.Lambda.AspNetCoreServer.APIGatewayHttpApiV2ProxyFunction the base class.
 
-
-#pragma warning disable S1135 // Track uses of "TODO" tags
     // TODO: check if want APIGatewayProxyFunction or APIGatewayHttpApiV2ProxyFunction
     //      https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-vs-rest.html
-#pragma warning restore S1135 // Track uses of "TODO" tags
-
 
     Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
 {
     /// <summary>
     /// The builder has configuration, logging and Amazon API Gateway already configured. The startup class
-    /// needs to be configured in this method using the UseStartup<>() method.
+    /// needs to be configured in this method using the UseStartup method.
     /// </summary>
     /// <param name="builder"></param>
     protected override void Init(IWebHostBuilder builder)

@@ -14,8 +14,7 @@ public class AuthControllerTests
     [Fact]
     public async Task FakeLogin_should_error_when_no_body()
     {
-        var request = TestControllerHelper
-                            .BuildPostRequest("/auth/fakelogin");
+        var request = TestControllerHelper.BuildPostRequest("/auth/fakelogin");
         var context = new TestLambdaContext();
 
         var lambdaFunction = new TestLambdaEntryPoint();
@@ -62,7 +61,7 @@ public class AuthControllerTests
     {
         var request = TestControllerHelper
                             .BuildPostRequest("/auth/fakelogin")
-                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = email, Name = "Fred Flintstone" });
+                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = email, Name = "Bugs Bunny" });
         var context = new TestLambdaContext();
 
         var lambdaFunction = new TestLambdaEntryPoint();
@@ -87,7 +86,7 @@ public class AuthControllerTests
     {
         var request = TestControllerHelper
                             .BuildPostRequest("/auth/fakelogin")
-                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = "fred.flintstone@email.com", Name = name });
+                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = "bugs.bunny@email.com", Name = name });
         var context = new TestLambdaContext();
 
         var lambdaFunction = new TestLambdaEntryPoint();

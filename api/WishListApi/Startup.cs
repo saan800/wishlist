@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WishListApi.Attrubutes;
 using WishListApi.Config;
+using WishListApi.Infrastructure;
 using WishListApi.Services;
 
 namespace WishListApi;
@@ -21,7 +22,7 @@ public class Startup
     public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container
-    public void ConfigureServices(IServiceCollection services)
+    public virtual void ConfigureServices(IServiceCollection services)
     {
         var jwtConfig = Configuration.GetRequiredSection("Jwt").Get<JwtConfig>();
 
@@ -33,6 +34,8 @@ public class Startup
         services.AddScoped(_ => jwtConfig);
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IWishListStore, FakeWishListStore>();
+        services.AddScoped<IWishListService, WishListService>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
@@ -120,9 +123,7 @@ public class Startup
         }
         else
         {
-#pragma warning disable S1135 // Track uses of "TODO" tags
             // TODO: limit CORS to website url only
-#pragma warning restore S1135 // Track uses of "TODO" tags
         }
     }
 }

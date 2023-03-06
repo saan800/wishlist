@@ -36,7 +36,8 @@ public class AuthServiceTests
 
         result.Payload.ShouldContainKeyAndValue("aud", _jwtConfig.Audience);
         result.Payload.ShouldContainKeyAndValue("iss", _jwtConfig.Issuer);
-        result.Payload.ShouldContainKeyAndValue("sub", email.ToLower());
+        result.Payload.ShouldContainKeyAndValue("sub", name.Replace("-", "").ToLower());
+        result.Payload.ShouldContainKeyAndValue("email", email.ToLower());
         result.Payload.ShouldContainKeyAndValue("name", name);
 
         result.ValidTo.ShouldBeLessThanOrEqualTo(DateTime.UtcNow.AddMinutes(61));
