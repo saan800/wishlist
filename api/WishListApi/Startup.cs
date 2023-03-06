@@ -1,10 +1,13 @@
 using System.Net;
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using WishListApi.Attrubutes;
 using WishListApi.Config;
+using WishListApi.Services;
 
 namespace WishListApi;
 
@@ -22,9 +25,14 @@ public class Startup
     {
         var jwtConfig = Configuration.GetRequiredSection("Jwt").Get<JwtConfig>();
 
-        services.AddControllers();
+        services.AddControllers(options =>
+        {
+            options.OutputFormatters.RemoveType<StringOutputFormatter>();
+        });
         services.AddScoped<ValidationFilterAttribute>();
         services.AddScoped(_ => jwtConfig);
+
+        services.AddScoped<IAuthService, AuthService>();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
@@ -50,6 +58,9 @@ public class Startup
                     new List <string> ()
                 }
             });
+
+            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -70,12 +81,20 @@ public class Startup
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.UseSwagger();
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = string.Empty; // In dev, "/" path shows swagger UI
+            });
         }
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        else
+        {
+            app.UseSwaggerUI(); // when deployed, need to go to "/swagger" to view swagger UI
+        }
 
         app.UseHttpsRedirection();
 

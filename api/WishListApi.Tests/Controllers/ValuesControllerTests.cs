@@ -1,4 +1,5 @@
 using Amazon.Lambda.TestUtilities;
+using Shouldly;
 using WishListApi.Tests.TestHelpers;
 using Xunit;
 
@@ -9,17 +10,21 @@ public class ValuesControllerTests
     [Fact]
     public async Task TestGet()
     {
-        var request = TestControllerHelper.BuildGetRequest("/api/values");
+        var request = TestControllerHelper
+                        .BuildGetRequest("/api/values")
+                        .AddJwtAuthorizationHeader("some@email.com", "someone");
         var context = new TestLambdaContext();
 
-        var lambdaFunction = new LambdaEntryPoint();
+        var lambdaFunction = new TestLambdaEntryPoint();
+
         var response = await lambdaFunction.FunctionHandlerAsync(request, context);
 
-        Assert.Equal(200, response.StatusCode);
-        Assert.Equal("[\"value1\",\"value2\"]", response.Body);
+        response.StatusCode.ShouldBe(200);
+        response.Body.ShouldBe("[\"value1\",\"value2\"]");
 
-        Assert.True(response.MultiValueHeaders.ContainsKey("Content-Type"));
-        Assert.Equal("application/json; charset=utf-8", response.MultiValueHeaders["Content-Type"][0]);
+        response.MultiValueHeaders.ShouldContainKey("Content-Type");
+        response.MultiValueHeaders["Content-Type"][0].ShouldContain("application/json");
+        response.MultiValueHeaders["Content-Type"][0].ShouldContain("charset=utf-8");
     }
 
 }
