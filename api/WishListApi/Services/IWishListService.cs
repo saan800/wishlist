@@ -33,7 +33,7 @@ namespace WishListApi.Services
         /// The name of the wish list much be unique for the user.
         /// </summary>
         /// <param name="request"></param>
-        /// <param name="seoUrlTitle"></param>
+        /// <param name="seoUrlKey"></param>
         /// <param name="userId"></param>
         /// <returns></returns>
         Task<(WishList? wishList, string? error)> Update(UpdateWishListRequest request, string seoUrlKey, string userId);

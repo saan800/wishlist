@@ -177,7 +177,7 @@ public class WishListServiceTests
         (WishList? result, string? errorResult) = await sut.Create(request, userId);
 
         result.ShouldBeNull();
-        errorResult.ShouldContain($"{wishList.SeoUrlKey} already exists");
+        errorResult?.ShouldContain($"{wishList.SeoUrlKey} already exists");
     }
 
     [Theory, AutoDomainData]
@@ -196,6 +196,7 @@ public class WishListServiceTests
 
         errorResult.ShouldBeNull();
 
+        result.ShouldNotBeNull();
         result.SeoUrlKey.ShouldBe(WishListHelper.FormatSeoUrlKey(userId, title));
         result.Title.ShouldBe(title);
         result.UserId.ShouldBe(userId);
@@ -222,7 +223,7 @@ public class WishListServiceTests
         (WishList? result, string? errorResult) = await sut.Update(request, seoUrlKey, userId);
 
         result.ShouldBeNull();
-        errorResult.ShouldContain($"Could not find a wish list for {seoUrlKey}");
+        errorResult?.ShouldContain($"Could not find a wish list for {seoUrlKey}");
     }
 
     [Theory, AutoDomainData]
@@ -247,6 +248,7 @@ public class WishListServiceTests
 
         errorResult.ShouldBeNull();
 
+        result.ShouldNotBeNull();
         result.SeoUrlKey.ShouldBe(wishList.SeoUrlKey);
         result.Title.ShouldBe(title);
         result.UserId.ShouldBe(wishList.UserId);

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 using Amazon.Lambda.TestUtilities;
 using Moq;
 using Shouldly;
@@ -9,15 +10,24 @@ using Xunit;
 
 namespace WishListApi.Tests.Controllers;
 
-public class WishListsControllerTests
+public class WishListsControllerTests : WishListApiTests.BaseControllerTests
 {
-    // TODO: can't figure out how to Mock IWishListStore into TestLambdaEntryPoint yet ;(
-    //      might need to change to integration test with DynamoDb running in docker
-    //      Or maybe do add then get, update, get, delete, get process to check
+    public WishListsControllerTests(WishListApiTests wishListApiTests) : base(wishListApiTests)
+    {
+    }
+
     [Theory]
     [AutoDomainData]
     public async Task Get(IList<WishList> wishLists, Mock<IWishListStore> mockWistListStore)
     {
+        // when
+        var (responseStatusCode, responseObj) = await Invoke<List<WishList>>
+                                                    (HttpMethod.Get, "/api/wishlists", "");
+
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.BadRequest);
+
+        // TODO: replace below with cleaner above
         var request = TestControllerHelper
                         .BuildGetRequest("/api/wishlists")
                         .AddJwtAuthorizationHeader("some@email.com", "someone");

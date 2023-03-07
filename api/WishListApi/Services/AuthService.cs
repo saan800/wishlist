@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using WishListApi.Config;
+using WishListApi.Helpers;
 
 namespace WishListApi.Services
 {
@@ -20,7 +21,7 @@ namespace WishListApi.Services
             email = email.ToLower().Trim();
             name = name.Trim();
             // TODO: something unique here that's not a GUID hopefully - use for SeoUrlKeys of wish lists
-            var userId = name.Replace(" ", "").Replace("-", "").ToLower();
+            var userId = WishListHelper.FormatKey(name);
 
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

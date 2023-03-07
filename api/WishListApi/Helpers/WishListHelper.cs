@@ -7,18 +7,19 @@ namespace WishListApi.Helpers
         public static string FormatSeoUrlKey(string userId, string title)
         {
 
-            return $"{FormatForUrl(userId)}/{FormatForUrl(title)}";
+            return $"{FormatKey(userId)}/{FormatKey(title)}";
         }
 
-        private static string FormatForUrl(string val)
+        public static string FormatKey(string val)
         {
-            var rgx = new Regex("[^a-z0-9-.]");
-            val = val
+            var rgx = new Regex("[^a-zA-Z0-9-. ]");
+
+            val = rgx.Replace(val, "");
+            return val
                     .Trim()
                     .ToLower()
                     .Replace("  ", " ")
                     .Replace(" ", "-");
-            return rgx.Replace(val, "");
         }
     }
 }

@@ -108,14 +108,4 @@ public class WishListsController : ControllerBase
 
         return NoContent();
     }
-
-    // TODO: put WishListItem actions in separate controller
-    // POST api/wishlists/bugs-bunny/birthday/item
-    //[HttpPost("{*seoUrlKey}/item")]
-    //[ProducesResponseType(typeof(WishList), (int)HttpStatusCode.OK)]
-    //[ProducesResponseType((int)HttpStatusCode.Conflict)]
-    //public async Task<IActionResult> Put(string seoUrlKey, [FromBody] AddWishListItemRequest request)
-    //{
-    //    throw new NotImplementedException();
-    //}
 }

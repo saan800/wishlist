@@ -52,6 +52,7 @@ public class FakeWishListStore : IWishListStore
                 _sharedWishListDb.Add(new SharedWishList { SeoUrlKey = seoUrlKey, UserId = sharedWithUserId });
             }
         }
+        await Task.CompletedTask;
     }
 
     public async Task Delete(string seoUrlKey, string userId)

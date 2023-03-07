@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text.Json;
-using Amazon.Lambda.TestUtilities;
 using AutoFixture.Xunit2;
 using Shouldly;
 using WishListApi.Models.Auth;
@@ -9,22 +8,21 @@ using Xunit;
 
 namespace WishListApi.Tests.Controllers;
 
-public class AuthControllerTests
+public class AuthControllerTests : WishListApiTests.BaseControllerTests
 {
+    public AuthControllerTests(WishListApiTests wishListApiTests) : base(wishListApiTests)
+    {
+    }
+
     [Fact]
     public async Task FakeLogin_should_error_when_no_body()
     {
-        var request = TestControllerHelper.BuildPostRequest("/auth/fakelogin");
-        var context = new TestLambdaContext();
+        // when
+        var (responseStatusCode, errorResult) = await Invoke<IDictionary<string, IReadOnlyCollection<string>>>
+                                                    (HttpMethod.Post, "/auth/fakelogin", "");
 
-        var lambdaFunction = new TestLambdaEntryPoint();
-
-        var response = await lambdaFunction.FunctionHandlerAsync(request, context);
-
-        response.StatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-        response.Body.ShouldNotBeNullOrWhiteSpace();
-
-        var errorResult = JsonSerializer.Deserialize<IDictionary<string, IReadOnlyCollection<string>>>(response.Body);
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         errorResult.ShouldNotBeNull();
         errorResult.ShouldContainKey("login");
@@ -34,19 +32,12 @@ public class AuthControllerTests
     [Fact]
     public async Task FakeLogin_should_error_when_body_is_not_json()
     {
-        var request = TestControllerHelper
-                            .BuildPostRequest("/auth/fakelogin")
-                            .AddBody("email: this@email.com");
-        var context = new TestLambdaContext();
+        // when
+        var (responseStatusCode, errorResult) = await Invoke<IDictionary<string, IReadOnlyCollection<string>>>
+                                                    (HttpMethod.Post, "/auth/fakelogin", "email: this@email.com");
 
-        var lambdaFunction = new TestLambdaEntryPoint();
-
-        var response = await lambdaFunction.FunctionHandlerAsync(request, context);
-
-        response.StatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-        response.Body.ShouldNotBeNullOrWhiteSpace();
-
-        var errorResult = JsonSerializer.Deserialize<IDictionary<string, IReadOnlyCollection<string>>>(response.Body);
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         errorResult.ShouldNotBeNull();
         errorResult.ShouldContainKey("login");
@@ -59,19 +50,13 @@ public class AuthControllerTests
     [InlineAutoData("no-at.sign")]
     public async Task FakeLogin_should_error_if_login_email_is_invalid(string email)
     {
-        var request = TestControllerHelper
-                            .BuildPostRequest("/auth/fakelogin")
-                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = email, Name = "Bugs Bunny" });
-        var context = new TestLambdaContext();
+        // when
+        var body = JsonSerializer.Serialize(new FakeLoginRequest { Email = email, Name = "Bugs Bunny" });
+        var (responseStatusCode, errorResult) = await Invoke<IDictionary<string, IReadOnlyCollection<string>>>
+                                                    (HttpMethod.Post, "/auth/fakelogin", body);
 
-        var lambdaFunction = new TestLambdaEntryPoint();
-
-        var response = await lambdaFunction.FunctionHandlerAsync(request, context);
-
-        response.StatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-        response.Body.ShouldNotBeNullOrWhiteSpace();
-
-        var errorResult = JsonSerializer.Deserialize<IDictionary<string, IReadOnlyCollection<string>>>(response.Body);
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         errorResult.ShouldNotBeNull();
         errorResult.ShouldContainKey("Email");
@@ -84,19 +69,14 @@ public class AuthControllerTests
     [InlineAutoData("")]
     public async Task FakeLogin_should_error_if_login_name_invalid(string name)
     {
-        var request = TestControllerHelper
-                            .BuildPostRequest("/auth/fakelogin")
-                            .AddObjToBodyAsJson(new FakeLoginRequest { Email = "bugs.bunny@email.com", Name = name });
-        var context = new TestLambdaContext();
+        // when
+        var body = JsonSerializer.Serialize(new FakeLoginRequest { Email = "bugs.bunny@email.com", Name = name });
+        var (responseStatusCode, errorResult) = await Invoke<IDictionary<string, IReadOnlyCollection<string>>>
+                                                    (HttpMethod.Post, "/auth/fakelogin", body);
 
-        var lambdaFunction = new TestLambdaEntryPoint();
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
-        var response = await lambdaFunction.FunctionHandlerAsync(request, context);
-
-        response.StatusCode.ShouldBe((int)HttpStatusCode.BadRequest);
-        response.Body.ShouldNotBeNullOrWhiteSpace();
-
-        var errorResult = JsonSerializer.Deserialize<IDictionary<string, IReadOnlyCollection<string>>>(response.Body);
         errorResult.ShouldNotBeNull();
         errorResult.ShouldNotContainKey("Email");
         errorResult.ShouldContainKey("Name");
@@ -106,28 +86,18 @@ public class AuthControllerTests
     [Theory, AutoData]
     public async Task FakeLogin_should_return_Jwt_token(string email, string name)
     {
+        // when
         email = $"{email}@Email.com ";
-        var request = TestControllerHelper
-                    .BuildPostRequest("/auth/fakelogin")
-                    .AddObjToBodyAsJson(new FakeLoginRequest { Email = email, Name = name });
-        var context = new TestLambdaContext();
+        var body = JsonSerializer.Serialize(new FakeLoginRequest { Email = email, Name = name });
+        var (responseStatusCode, responseBodyObj) = await Invoke<JwtTokenResponse>
+                                                    (HttpMethod.Post, "/auth/fakelogin", body);
 
-        var lambdaFunction = new TestLambdaEntryPoint();
+        // then
+        responseStatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var response = await lambdaFunction.FunctionHandlerAsync(request, context);
-
-        response.StatusCode.ShouldBe((int)HttpStatusCode.OK);
-        response.Body.ShouldNotBeNullOrWhiteSpace();
-
-        response.MultiValueHeaders.ShouldContainKey("Content-Type");
-        response.MultiValueHeaders["Content-Type"][0].ShouldContain("application/json");
-        response.MultiValueHeaders["Content-Type"][0].ShouldContain("charset=utf-8");
-
-        var bodyResult = JsonSerializer.Deserialize<IDictionary<string, string>>(response.Body);
-        bodyResult.ShouldNotBeNull();
-        bodyResult.ShouldContainKeyAndValue("email", email.ToLower().Trim());
-        bodyResult.ShouldContainKeyAndValue("name", name);
-        bodyResult.ShouldContainKey("token");
-        bodyResult["token"].ShouldNotBeNullOrWhiteSpace();
+        responseBodyObj.ShouldNotBeNull();
+        responseBodyObj.Email.ShouldBe(email.ToLower().Trim());
+        responseBodyObj.Name.ShouldBe(name);
+        responseBodyObj.Token.ShouldNotBeNullOrWhiteSpace();
     }
 }

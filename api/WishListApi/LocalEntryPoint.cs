@@ -1,19 +1,18 @@
-namespace WishListApi;
+using WishListApi;
 
-/// <summary>
-/// The Main function can be used to run the ASP.NET Core application locally using the Kestrel web server.
-/// </summary>
-public static class LocalEntryPoint
-{
-    public static void Main(string[] args)
-    {
-        CreateHostBuilder(args).Build().Run();
-    }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+var builder = Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
                 webBuilder.UseStartup<Startup>();
             });
+
+var host = builder.Build();
+host.Run();
+
+#pragma warning disable S3903 // Types should be defined in named namespaces
+#pragma warning disable CA1050 // Declare types in namespaces
+public class LocalEntryPoint
+{
 }
+#pragma warning restore CA1050 // Declare types in namespaces
+#pragma warning restore S3903 // Types should be defined in named namespaces
